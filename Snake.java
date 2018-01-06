@@ -27,7 +27,9 @@ public class Snake extends Application {
 	
 	private ObservableList<Rectangle> snake = FXCollections.observableArrayList();
 	
-	Rectangle s = new Rectangle(380, 380, 20, 20);
+	Rectangle s = new Rectangle(381, 381, 18, 18);
+	
+	private boolean overlap;
 	
 	private int score = 0;
 	private Text scoreText = new Text("Score: " + score);
@@ -44,23 +46,24 @@ public class Snake extends Application {
 	private Parent create() {
 		root.setPrefSize(800, 800);
 		
-		s.setFill(Color.LIME);
+		s.setFill(Color.WHITE);
 		
 		snake.add(s);
 		
-		Rectangle f = new Rectangle(rand.nextInt(40)*20, rand.nextInt(40)*20, 20, 20);
-		f.setFill(Color.INDIANRED);
+		Rectangle f = new Rectangle(rand.nextInt(40)*20+1, rand.nextInt(40)*20+1, 18, 18);
+		f.setFill(Color.RED);
 		
 		scoreText.setX(700);
 		scoreText.setY(30);
 		scoreText.setFont(Font.font(20));
+		scoreText.setFill(Color.LIME);
 		
 		Rectangle bg = new Rectangle(800, 800);
-		bg.setFill(Color.SKYBLUE);
+		bg.setFill(Color.BLACK);
 		
-		root.getChildren().addAll(bg, s, f, scoreText);
+		root.getChildren().addAll(bg, scoreText, s, f);
 				
-		timeline = new Timeline(new KeyFrame(Duration.seconds(0.035), event -> {
+		timeline = new Timeline(new KeyFrame(Duration.seconds(0.04), event -> {
 			if (!gameOver) {
 				for (int i = snake.size() - 1; i > 0; i--) {
 					snake.get(i).setX(snake.get(i-1).getX());
@@ -82,21 +85,35 @@ public class Snake extends Application {
 				catch(Exception e) {}
 			}
 			
-			if (s.getX() == root.getWidth() || s.getX() == -20 || s.getY() == root.getHeight() || s.getY() == -20) {
+			if (s.getX() > root.getWidth() || s.getX() < 0 || s.getY() > root.getHeight() || s.getY() < 0) {
 				gameOver = true;
 				gameOverScreen();
 				timeline.stop();
 			}
 			
 			if (s.getX() == f.getX() && s.getY() == f.getY()) {
-				f.setX(rand.nextInt(40)*20);
-				f.setY(rand.nextInt(40)*20);
+				while (true) {
+					overlap = false;
+					f.setX(rand.nextInt(40)*20 + 1);
+					f.setY(rand.nextInt(40)*20 + 1);
+					
+					for(int i = snake.size() - 1; i > 0; i--) {
+						if (snake.get(i).getX() == f.getX() && snake.get(i).getY() == f.getY()) {
+							overlap = true;
+						}
+					}
+					if (!overlap) {
+						break;
+					}
+				}
 				
-				Rectangle rect = new Rectangle(snake.get(snake.size() - 1).getX(), snake.get(snake.size() - 1).getY(), 20, 20);
-				rect.setFill(Color.LIME);
+				Rectangle rect = new Rectangle(snake.get(snake.size() - 1).getX(), snake.get(snake.size() - 1).getY(), 18, 18);
+				rect.setFill(Color.WHITE);
 				root.getChildren().add(rect);
 				snake.add(rect);
 				
+				root.getChildren().remove(scoreText);
+				root.getChildren().add(scoreText);
 				score++;
 				scoreText.setText("Score: " + score);
 			}
@@ -109,16 +126,16 @@ public class Snake extends Application {
 	}
 	
 	private void gameOverScreen() {
-		result = new Text("Score: " + score);
+		result = new Text("Game over");
 		result.setFont(Font.font("Arial Black", 80));
-		result.setFill(Color.WHITE);
 		result.setX(70);
 		result.setY(360);
+		result.setFill(Color.LIME);
 		
 		retry.setFont(Font.font(30));
-		retry.setFill(Color.WHITE);
 		retry.setX(70);
 		retry.setY(410);
+		retry.setFill(Color.LIME);
 		
 		root.getChildren().addAll(result, retry);
 	}
@@ -131,8 +148,8 @@ public class Snake extends Application {
 			}
 		}
 		
-		s.setX(380);
-		s.setY(380);
+		s.setX(381);
+		s.setY(381);
 		
 		dir(1, 0);
 		

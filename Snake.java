@@ -27,7 +27,7 @@ public class Snake extends Application {
 	
 	private ObservableList<Rectangle> snake = FXCollections.observableArrayList();
 	
-	Rectangle s = new Rectangle(381, 381, 18, 18);
+	Rectangle s = new Rectangle(376, 376, 23, 23);
 	
 	private boolean overlap;
 	
@@ -47,10 +47,9 @@ public class Snake extends Application {
 		root.setPrefSize(800, 800);
 		
 		s.setFill(Color.WHITE);
-		
 		snake.add(s);
 		
-		Rectangle f = new Rectangle(rand.nextInt(40)*20+1, rand.nextInt(40)*20+1, 18, 18);
+		Rectangle f = new Rectangle(rand.nextInt(32)*25+1, rand.nextInt(32)*25+1, 23, 23);
 		f.setFill(Color.RED);
 		
 		scoreText.setX(700);
@@ -70,8 +69,8 @@ public class Snake extends Application {
 					snake.get(i).setY(snake.get(i-1).getY());
 				}
 				
-				s.setX(s.getX() + xSpeed * 20);
-				s.setY(s.getY() + ySpeed * 20);
+				s.setX(s.getX() + xSpeed * 25);
+				s.setY(s.getY() + ySpeed * 25);
 			}
 			
 			for (int i = snake.size() - 1; i > 0; i--) {
@@ -94,8 +93,8 @@ public class Snake extends Application {
 			if (s.getX() == f.getX() && s.getY() == f.getY()) {
 				while (true) {
 					overlap = false;
-					f.setX(rand.nextInt(40)*20 + 1);
-					f.setY(rand.nextInt(40)*20 + 1);
+					f.setX(rand.nextInt(32)*25 + 1);
+					f.setY(rand.nextInt(32)*25 + 1);
 					
 					for(int i = snake.size() - 1; i > 0; i--) {
 						if (snake.get(i).getX() == f.getX() && snake.get(i).getY() == f.getY()) {
@@ -107,7 +106,7 @@ public class Snake extends Application {
 					}
 				}
 				
-				Rectangle rect = new Rectangle(snake.get(snake.size() - 1).getX(), snake.get(snake.size() - 1).getY(), 18, 18);
+				Rectangle rect = new Rectangle(snake.get(snake.size() - 1).getX(), snake.get(snake.size() - 1).getY(), 23, 23);
 				rect.setFill(Color.WHITE);
 				root.getChildren().add(rect);
 				snake.add(rect);
@@ -148,13 +147,18 @@ public class Snake extends Application {
 			}
 		}
 		
-		s.setX(381);
-		s.setY(381);
+		s.setX(376);
+		s.setY(376);
 		
 		dir(1, 0);
 		
 		score = 0;
 		scoreText.setText("Score: " + score);
+	}
+	
+	private void dir(int x, int y) {
+		xSpeed = x;
+		ySpeed = y;
 	}
 
 	@Override
@@ -190,11 +194,6 @@ public class Snake extends Application {
 		stage.setScene(scene);
 		stage.setTitle("Snake game");
 		stage.show();
-	}
-	
-	private void dir(int x, int y) {
-		xSpeed = x;
-		ySpeed = y;
 	}
 	
 	public static void main(String[] args) {

@@ -3,8 +3,6 @@ package snakeGame;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -25,7 +23,7 @@ public class Snake extends Application {
 	private int xSpeed = 1;
 	private int ySpeed = 0;
 	
-	private ObservableList<Rectangle> snake = FXCollections.observableArrayList();
+	private ArrayList<Rectangle> snake = new ArrayList<>();
 	
 	Rectangle s = new Rectangle(376, 376, 23, 23);
 	
@@ -46,7 +44,7 @@ public class Snake extends Application {
 	private Parent create() {
 		root.setPrefSize(800, 800);
 		
-		s.setFill(Color.WHITE);
+		s.setFill(Color.LIGHTGREEN);
 		snake.add(s);
 		
 		Rectangle f = new Rectangle(rand.nextInt(32)*25+1, rand.nextInt(32)*25+1, 23, 23);
@@ -55,7 +53,7 @@ public class Snake extends Application {
 		scoreText.setX(700);
 		scoreText.setY(30);
 		scoreText.setFont(Font.font(20));
-		scoreText.setFill(Color.LIME);
+		scoreText.setFill(Color.WHITE);
 		
 		Rectangle bg = new Rectangle(800, 800);
 		bg.setFill(Color.BLACK);
@@ -75,7 +73,7 @@ public class Snake extends Application {
 			
 			for (int i = snake.size() - 1; i > 0; i--) {
 				try {
-					if (snake.get(i).getX() == s.getX() && snake.get(i).getY() == s.getY()) {
+					if (snake.get(i).getBoundsInParent().intersects(s.getBoundsInParent())) {
 						gameOver = true;
 						gameOverScreen();
 						timeline.stop();
@@ -84,20 +82,27 @@ public class Snake extends Application {
 				catch(Exception e) {}
 			}
 			
-			if (s.getX() > root.getWidth() || s.getX() < 0 || s.getY() > root.getHeight() || s.getY() < 0) {
-				gameOver = true;
-				gameOverScreen();
-				timeline.stop();
+			if (s.getX() > 800) {
+				s.setX(1);
+			}
+			if(s.getX() < 0) {
+				s.setX(776);
+			}
+			if (s.getY() > 800) {
+				s.setY(1);
+			}
+			if (s.getY() < 0) {
+				s.setY(776);
 			}
 			
-			if (s.getX() == f.getX() && s.getY() == f.getY()) {
+			if (s.getBoundsInParent().intersects(f.getBoundsInParent())) {
 				while (true) {
 					overlap = false;
 					f.setX(rand.nextInt(32)*25 + 1);
 					f.setY(rand.nextInt(32)*25 + 1);
 					
 					for(int i = snake.size() - 1; i > 0; i--) {
-						if (snake.get(i).getX() == f.getX() && snake.get(i).getY() == f.getY()) {
+						if (snake.get(i).getBoundsInParent().intersects(f.getBoundsInParent())) {
 							overlap = true;
 						}
 					}
@@ -107,7 +112,7 @@ public class Snake extends Application {
 				}
 				
 				Rectangle rect = new Rectangle(snake.get(snake.size() - 1).getX(), snake.get(snake.size() - 1).getY(), 23, 23);
-				rect.setFill(Color.WHITE);
+				rect.setFill(Color.LIGHTGREEN);
 				root.getChildren().add(rect);
 				snake.add(rect);
 				
